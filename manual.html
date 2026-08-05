@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Field Manual — Trench Hogz</title>
+<meta name="description" content="The Trench Hogz field manual: how a turn works, the classes, the arsenal, killstreaks, modes, mutators and the Operations campaign.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --mud:#181410; --trench:#241d15; --parapet:#33291c;
+    --bone:#e8ddc4; --dust:#a3937a; --gold:#f2b32b; --gold-hot:#ffd45e;
+    --signal:#66d9d0; --blood:#b5402e;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--mud);color:var(--bone);font-family:'IBM Plex Mono',monospace;font-size:15.5px;line-height:1.7}
+  h1,h2,h3,nav a,.btn{font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.06em}
+  a{color:var(--gold);text-decoration:none}
+  a:hover{color:var(--gold-hot)}
+
+  nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:1.6rem;
+    padding:.65rem 1.4rem;background:rgba(24,20,16,.92);border-bottom:2px solid var(--parapet);backdrop-filter:blur(6px)}
+  nav .wordmark{font-family:'Oswald',sans-serif;font-weight:700;font-size:1.05rem;color:var(--gold);letter-spacing:.1em;text-transform:uppercase}
+  nav .links{display:flex;gap:1.3rem;margin-left:auto}
+  nav .links a{font-size:.85rem;font-weight:600;color:var(--dust)}
+  nav .links a:hover{color:var(--bone)}
+
+  header.top{padding:4.5rem 1.5rem 3rem;text-align:center;background:linear-gradient(180deg,#100d0a,var(--mud))}
+  .stamp{display:inline-block;border:2px solid var(--blood);color:var(--blood);padding:.15rem .8rem;
+    font-size:.7rem;letter-spacing:.35em;text-transform:uppercase;transform:rotate(-2deg);margin-bottom:1.2rem}
+  h1{font-size:clamp(2rem,6vw,3.2rem);font-weight:700}
+  header.top p{color:var(--dust);max-width:38rem;margin:.8rem auto 0;font-size:.9rem}
+
+  .toc{max-width:960px;margin:0 auto;padding:0 1.5rem 1rem;display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center}
+  .toc a{border:1px solid var(--parapet);background:var(--trench);padding:.35rem .8rem;font-size:.75rem;
+    font-family:'IBM Plex Mono',monospace;color:var(--dust)}
+  .toc a:hover{color:var(--gold-hot);border-color:var(--gold)}
+
+  section{padding:3.2rem 1.5rem}
+  section:nth-of-type(even){background:#151109}
+  .shell{max-width:960px;margin:0 auto}
+  .kicker{color:var(--gold);font-size:.72rem;letter-spacing:.3em;text-transform:uppercase}
+  h2{font-size:clamp(1.4rem,3.5vw,1.9rem);font-weight:700;margin:.3rem 0 .5rem}
+  .rule{width:64px;height:4px;background:var(--gold);margin-bottom:1.4rem}
+  p.lede{color:var(--dust);max-width:46rem;margin-bottom:1rem}
+  section p{margin:.7rem 0;max-width:46rem}
+  em{color:var(--dust)}
+
+  .cards{margin-top:1.6rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+  .card{background:var(--trench);border:1px solid var(--parapet);padding:1.1rem 1.2rem;position:relative}
+  .card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--gold);opacity:.85}
+  .card.red::before{background:var(--blood)}
+  .card.teal::before{background:var(--signal)}
+  .card h3{font-size:.98rem;font-weight:600;color:var(--gold-hot);margin-bottom:.4rem}
+  .card.red h3{color:#e08573}
+  .card.teal h3{color:var(--signal)}
+  .card p{font-size:.83rem;color:var(--bone);margin:0}
+  .card p+p{margin-top:.5rem}
+  .card .sub{font-size:.72rem;color:var(--dust);text-transform:uppercase;letter-spacing:.12em;font-family:'IBM Plex Mono',monospace;margin-bottom:.35rem}
+
+  table{width:100%;border-collapse:collapse;margin-top:1.4rem;font-size:.83rem}
+  th{font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.1em;font-size:.72rem;
+    color:var(--gold);text-align:left;padding:.6rem .7rem;border-bottom:2px solid var(--parapet)}
+  td{padding:.6rem .7rem;border-bottom:1px solid var(--parapet);vertical-align:top}
+  td:first-child{color:var(--gold-hot);font-family:'Oswald',sans-serif;letter-spacing:.05em;white-space:nowrap}
+  td.k{color:var(--signal);font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;white-space:nowrap}
+
+  .note{border-left:3px solid var(--signal);background:var(--trench);padding:.8rem 1rem;margin-top:1.4rem;
+    font-size:.8rem;color:var(--dust);max-width:46rem}
+  .note b{color:var(--signal);font-weight:500}
+
+  footer{border-top:2px solid var(--parapet);padding:2rem 1.5rem 2.6rem;text-align:center;font-size:.78rem;color:var(--dust)}
+  footer a{margin:0 .8rem}
+  .squeak{margin-top:.8rem;font-size:.7rem;color:#6b5f4d}
+  @media(max-width:700px){nav .links a:not(:last-child){display:none}}
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="wordmark">Trench Hogz</span>
+  <div class="links">
+    <a href="index.html">Home</a>
+    <a href="index.html#screenshots">Screenshots</a>
+    <a href="index.html#devlog">Devlog</a>
+    <a href="index.html#press">Press</a>
+  </div>
+</nav>
+
+<header class="top">
+  <div class="stamp">For Recruits' Eyes Only</div>
+  <h1>The Field Manual</h1>
+  <p>Everything the War Office is willing to put in writing: how a turn works,
+  who the pigs are, what the toys do, and the several ways a match can end.
+  The alpha is in active tuning — the rules below are the contract; the exact
+  numbers are the balance team's problem.</p>
+</header>
+
+<div class="toc">
+  <a href="#basics">The Basics</a>
+  <a href="#classes">Classes</a>
+  <a href="#arsenal">The Arsenal</a>
+  <a href="#killstreaks">Killstreaks</a>
+  <a href="#modes">Modes</a>
+  <a href="#mutators">Mutators</a>
+  <a href="#factions">Factions</a>
+  <a href="#operations">Operations</a>
+  <a href="#hangar">Between Tours</a>
+</div>
+
+<section id="basics">
+  <div class="shell">
+    <span class="kicker">Section 1</span>
+    <h2>The Basics</h2>
+    <div class="rule"></div>
+    <p class="lede">Trench Hogz is squad-versus-squad turn-based artillery war.
+    You field a squad of pigs; so does the other side. Turns alternate until
+    one side has no pigs left — or until the mode you're playing says otherwise.</p>
+
+    <div class="cards">
+      <div class="card">
+        <h3>One move, one action</h3>
+        <p>On its turn a pig repositions, then spends its single action — fire,
+        lob, heal, place a device, or commit to something it will regret. Then
+        the other side goes.</p>
+      </div>
+      <div class="card">
+        <h3>Aim it yourself</h3>
+        <p>Flat guns fly straight inside the sights and need a clear lane.
+        Arcing weapons trade certainty for reach — set the angle, judge the
+        power, clear the parapet, and accept what the wind thinks of your plan.</p>
+      </div>
+      <div class="card red">
+        <h3>Friendly fire is always on</h3>
+        <p>A grenade does not check dog-tags. Your own pigs are exactly as
+        squishy inside a blast radius as the enemy's. This is policy, not a
+        setting.</p>
+      </div>
+      <div class="card">
+        <h3>Terrain is a weapon</h3>
+        <p>Trenches, parapets, wrecks and water shape every shot. High ground
+        earns range; hard cover stops flat guns dead; the map edge and whatever
+        lives in the water are both permanently out of patience.</p>
+      </div>
+      <div class="card">
+        <h3>Last herd standing</h3>
+        <p>Eliminating the enemy squad wins in every mode — even ones with
+        their own objective. A fallen pig goes out with a dignified squeak and
+        a puff of smoke.</p>
+      </div>
+      <div class="card teal">
+        <h3>Quick Play</h3>
+        <p>One tap from the title screen into a skirmish on your last
+        settings — squad, map, rules, everything. The game remembers your
+        favourite way to lose pigs.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="classes">
+  <div class="shell">
+    <span class="kicker">Section 2</span>
+    <h2>The Roster — ways to be a pig</h2>
+    <div class="rule"></div>
+    <p class="lede">Every class is a trade. The Grunt is the yardstick; everyone
+    else swaps one axis for another — speed for armour, health for reach,
+    firepower for the ability to keep everyone else alive.</p>
+
+    <div class="cards">
+      <div class="card"><div class="sub">The backbone</div><h3>Grunt</h3>
+        <p>Rifle, pot helmet, boundless naïve courage. Cheap and plentiful.
+        You will lose a lot of these. That is the point.</p></div>
+      <div class="card"><div class="sub">The closer</div><h3>Assault</h3>
+        <p>Gets in close and ends conversations. Shotgun answer to a rifle
+        question — the shortest distance between two trenches is an Assault
+        who has decided.</p></div>
+      <div class="card"><div class="sub">Demolitions</div><h3>Grenadier</h3>
+        <p>Grenades, TNT, mines, questionable judgement. Rules the field by
+        making whole stretches of it unwise to stand on, and lobs from outside
+        every flat gun's reach.</p></div>
+      <div class="card"><div class="sub">The wall of ham</div><h3>Heavy</h3>
+        <p>Belt-fed machine gun and a bazooka, slow as a Sunday roast.
+        Nothing pins a line down like the Heavy leaning on the trigger.</p></div>
+      <div class="card"><div class="sub">Field surgeon</div><h3>Medic</h3>
+        <p>Keeps your veterans breathing so you don't have to keep training
+        fresh Grunts. Healing wins campaigns; the memorial board is the
+        alternative.</p></div>
+      <div class="card"><div class="sub">Marksman</div><h3>Sniper</h3>
+        <p>Fragile, patient, and able to reach across the whole map to ruin
+        one specific pig's afternoon — if the line of sight is honest.</p></div>
+      <div class="card teal"><div class="sub">Cloak &amp; blade</div><h3>Phantom</h3>
+        <p>Cloaks, closes, and works quietly: a sleep dart to put a sentry
+        down, a blade to make it permanent. Executing a sleeping enemy is
+        called Goodnight, and the War Office does not ask questions.</p></div>
+      <div class="card red"><div class="sub">The fifth team</div><h3>The Dogs</h3>
+        <p>A monoclass melee swarm with cyber-grafts, a spine gun, and a spare
+        life apiece. Kennel names beside unit designations. They do not do
+        subtle.</p></div>
+      <div class="card"><div class="sub">The sixth faction</div><h3>The Tribals</h3>
+        <p>Bows, spears and the only true arcs in the game — everything they
+        loose goes up before it comes down, and it comes down where it
+        pleases. Clan epithets, no two alike.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="arsenal">
+  <div class="shell">
+    <span class="kicker">Section 3</span>
+    <h2>The Arsenal — and the dirty tricks</h2>
+    <div class="rule"></div>
+    <p class="lede">Four kinds of harm. Direct weapons need a clear lane. Arcs
+    go over the parapet. Placed devices wait. And one item on the table makes
+    friends instead.</p>
+
+    <table>
+      <tr><th>Weapon</th><th>Kind</th><th>Field notes</th></tr>
+      <tr><td>Pistol</td><td class="k">Direct</td><td>Infinite ammo. The pig's best friend when everything else has gone wrong.</td></tr>
+      <tr><td>Rifle</td><td class="k">Direct</td><td>The Grunt's bread and butter — flies flat inside the sights.</td></tr>
+      <tr><td>Shotgun</td><td class="k">Direct</td><td>The Assault's argument. Devastating up close, a rumour at range.</td></tr>
+      <tr><td>Machine Gun</td><td class="k">Direct</td><td>The Heavy's lawn-mower. Short-to-mid range, morale-adjusting.</td></tr>
+      <tr><td>Sniper Rifle</td><td class="k">Direct</td><td>Reaches clear across the field, given an honest line of sight.</td></tr>
+      <tr><td>Blade</td><td class="k">Direct</td><td>Melee. Very personal. The Phantom's speciality; silent by design.</td></tr>
+      <tr><td>Grenade</td><td class="k">Arc</td><td>Lobbed neatly over low cover. The bull's-eye takes it all, each ring out takes less — and the pig behind you counts as a ring.</td></tr>
+      <tr><td>Bazooka</td><td class="k">Arc*</td><td>A straight, screaming projectile — the standing answer to most architectural questions.</td></tr>
+      <tr><td>Molotov</td><td class="k">Arc</td><td>Sets the ground, and anyone on it, on fire. How it started is not the War Office's concern.</td></tr>
+      <tr><td>TNT / C4</td><td class="k">Placed</td><td>Placed close, detonated with regret. Do the maths, then run.</td></tr>
+      <tr><td>Mine</td><td class="k">Trigger</td><td>Sits on a tile and waits. Blows the moment an enemy steps on.</td></tr>
+      <tr><td>Bear Trap</td><td class="k">Trigger</td><td>Holds a grudge and a leg. It will be exactly where you left it.</td></tr>
+      <tr><td>Sleep Dart</td><td class="k">Utility</td><td>Puts a pig down for a nap it may not wake from, if a Phantom is nearby.</td></tr>
+      <tr><td>Med Kit</td><td class="k">Heal</td><td>Patches up the pig next door. The only entry on this table that makes friends.</td></tr>
+    </table>
+
+    <p class="note"><b>*On the bazooka:</b> it flies straight, but it answers to
+    the same physics as everything else — what goes over a parapet is the
+    grenade's business; what goes <em>through</em> the sandbags is the
+    bazooka's.</p>
+  </div>
+</section>
+
+<section id="killstreaks">
+  <div class="shell">
+    <span class="kicker">Section 4</span>
+    <h2>Killstreaks</h2>
+    <div class="rule"></div>
+    <p class="lede">Do enough damage in one match and the War Office starts
+    returning your calls. Streak rewards escalate — from information, to
+    ordnance, to the end of the map.</p>
+
+    <div class="cards">
+      <div class="card teal"><h3>UAV</h3>
+        <p>Eyes overhead for a spell. A convenience in the open; under Fog of
+        War, the difference between shooting and guessing.</p></div>
+      <div class="card"><h3>Mortar Rack</h3>
+        <p>A stonk on a position of your choosing. The wind, as ever, is a
+        neutral party with opinions.</p></div>
+      <div class="card"><h3>Guided Missile</h3>
+        <p>Flown personally from a field tablet. One designation, one very
+        attentive missile. The tablet accepts no responsibility for pilots
+        who chase a moving target into their own trench.</p></div>
+      <div class="card red"><h3>The Nuke</h3>
+        <p>A five-beat cinematic, a bunker with room for the quick, and a door
+        that does not reopen. Riding it out sealed inside is an achievement.
+        Standing outside is a memorial entry.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="modes">
+  <div class="shell">
+    <span class="kicker">Section 5</span>
+    <h2>Modes — what winning means</h2>
+    <div class="rule"></div>
+    <p class="lede">A mode is a ruleset: one per match. Elimination always wins
+    in parallel — objectives are a second way to win, never a replacement.</p>
+
+    <div class="cards">
+      <div class="card"><h3>Skirmish</h3>
+        <p>The classic. Two squads, one map, last herd standing. Yours to
+        configure: map, faction, squad, enemy, rules.</p></div>
+      <div class="card"><h3>King of the Hill</h3>
+        <p>Every map has a heart — a wreck, a track bed, a town square. Stand
+        in it, alone, at the end of a round to bank a hold; first to five holds
+        wins. Both teams in the ring is CONTESTED and banks nothing, which
+        means the last pig to act in a round can walk in and deny the tick.</p></div>
+      <div class="card red"><h3>Countdown</h3>
+        <p>One side arms the warhead; the other disarms it, shelters behind the
+        bunker door, or solves the problem at the source. Five endings, all of
+        them somebody's fault.</p></div>
+      <div class="card red"><h3>Steel Sow Raid</h3>
+        <p>The boss mission. A colossal walking factory with three weak points
+        at three heights — leg, coolant, sensors, in any order — then the head
+        opens and the pilot answers for all of it. Bring the squad; leave with
+        an anecdote.</p></div>
+      <div class="card"><h3>Large Battle</h3>
+        <p>Eight a side, one of every class, big maps only. No director, no
+        gimmick — the mode <em>is</em> the scale.</p></div>
+      <div class="card"><h3>Horde</h3>
+        <p>Round-based survival against something the War Office declines to
+        name in print. Each round fields more of them. Score is the deepest
+        round you survive. Unlocked by... an event.</p></div>
+      <div class="card teal"><h3>Basic Training</h3>
+        <p>The tutorial. The range instructor takes full credit for everything
+        you learn and no responsibility for how you use it.</p></div>
+      <div class="card teal"><h3>Director Mode</h3>
+        <p>The war plays itself on a clean, HUD-free screen — a cinematic
+        camera watching two AI sides go at it. Excellent with a beverage.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="mutators">
+  <div class="shell">
+    <span class="kicker">Section 6</span>
+    <h2>Mutators — how the match is fought</h2>
+    <div class="rule"></div>
+    <p class="lede">A mutator changes how you fight without changing what
+    winning means. Stack as many as the compatibility board allows — your
+    loadout shows as badges on deploy and again on the results screen.</p>
+
+    <div class="cards">
+      <div class="card red"><h3>Sudden Death</h3>
+        <p>After turn 20, healing stops for good and every pig on the field
+        caps at half health. A deadline, not a nerf.</p>
+        <p><em>Sub-toggle — CLOSING RING:</em> the standable map shrinks every
+        round. Outside the ring counts as a drowning, with the same paperwork.</p></div>
+      <div class="card"><h3>Big Squads</h3>
+        <p>Up to six a side. The extra spawn points are derived side-fairly and
+        only ever on safe footing — a short squad is a fair match; a pig
+        spawned in the river is not.</p></div>
+      <div class="card red"><h3>One Life</h3>
+        <p>Every spare life stripped — the Dogs' second included. A Medic can
+        still patch you up; nobody can bring you back. Absolute stakes,
+        no exceptions, because a mutator called ONE LIFE with an asterisk
+        would be a worse mutator.</p></div>
+      <div class="card teal"><h3>Fog of War</h3>
+        <p>Per-team visibility, class-varied sight — the Sniper sees far, the
+        Phantom hears through walls. Unseen enemies are not drawn at all; you
+        get a ghost marker at the last place you had eyes on, fading over
+        three turns.</p>
+        <p><em>The honest part:</em> the AI obeys exactly the same rules you
+        do. It shoots at pigs it can see, walks toward last-known positions
+        when the trail goes cold, and never gets a free peek. There is a
+        ledger in the code that proves it.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="factions">
+  <div class="shell">
+    <span class="kicker">Section 7</span>
+    <h2>The Factions</h2>
+    <div class="rule"></div>
+    <p class="lede">Same pink hide, very different attitudes. Every pig on the
+    field carries a unique handcrafted name in its faction's voice — and within
+    one battle, no two pigs ever share one.</p>
+
+    <div class="cards">
+      <div class="card"><div class="sub">Olive drab · the default squad</div><h3>Bacon Brigade</h3>
+        <p>Salt-of-the-earth foot soldiers with polite British ranks.
+        Dependable, disciplined, first over the top — grumbling the whole
+        way, going anyway.</p></div>
+      <div class="card"><div class="sub">Sandy tan · desert camo</div><h3>Desert Hams</h3>
+        <p>Sun-baked sharpshooters named for heat, dune and mirage. Masters of
+        the long game and the longer wait.</p></div>
+      <div class="card teal"><div class="sub">Navy blue · the naval set</div><h3>Blue Boars</h3>
+        <p>Salt-water swine with naval slang and a chip on the shoulder. Came
+        ashore looking for a fight; never quite went back to the boats.</p></div>
+      <div class="card red"><div class="sub">Crimson · the rivals</div><h3>Red Rashers</h3>
+        <p>The pantomime villains of the pork war. Loud, red, gloriously
+        unsubtle — enthusiasm with explosives. Watch your flanks.</p></div>
+      <div class="card"><div class="sub">Clan epithets</div><h3>The Tribals</h3>
+        <p>The sixth faction. Bows, spears, invented clan names, and the only
+        true arcs in the game. High ground was always theirs.</p></div>
+      <div class="card red"><div class="sub">Kennel names · unit designations</div><h3>The Dogs</h3>
+        <p>The fifth team. A monoclass swarm, cyber-grafted, spine-gunned, and
+        issued a spare life each. Diplomacy was never on the table.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="operations">
+  <div class="shell">
+    <span class="kicker">Section 8</span>
+    <h2>Operations — the campaign as a ladder</h2>
+    <div class="rule"></div>
+    <p class="lede">An Operation is a nine-rung tower climbed with one roster.
+    Losses are permanent. The top rung does not introduce itself.</p>
+    <p>Your pigs carry service records between battles — kills, tours, medals,
+    the works. A pig that falls on rung six is not on rung seven: the roster
+    thins, the survivors harden, and the memorial board in the hangar remembers
+    everyone who didn't come back, by name.</p>
+    <p>Operation I is <strong>FIRST FURROW</strong>. Summiting it earns an
+    achievement; summiting it with zero pigs killed in action earns a different
+    one, and the armband that comes with it is sewn on, not handed out.</p>
+    <p class="note"><b>Permadeath is the hook, not the rule:</b> outside
+    Operations — skirmish, King of the Hill, all of it — your pigs respawn like
+    the professionals they pretend to be. Only the ladder keeps score forever.</p>
+  </div>
+</section>
+
+<section id="hangar">
+  <div class="shell">
+    <span class="kicker">Section 9</span>
+    <h2>Between Tours</h2>
+    <div class="rule"></div>
+    <p class="lede">Home is a walkable hangar. The crew is there; the horizon
+    is not quiet.</p>
+    <p>Between battles you have the run of the place: an outfitters for hats
+    and loadouts, squad presets, daily contracts, a rank to climb from the sty
+    up to Trench Sgt. Major, a medal wall with ladders deep enough to outlast
+    you, and a Play of the Match when you earn one. Your veterans hang around
+    the hangar between tours — you can rename any pig to the one word you will
+    actually shout at it. Hamlet. Chops. Boris. Unit-7.</p>
+    <p>And on one wall, the memorial board. Every name on it is real, in the
+    sense that matters: you fielded them, you named them, and you remember
+    which rung it was.</p>
+  </div>
+</section>
+
+<footer>
+  <div>
+    <a href="index.html">Home</a>
+    <a href="index.html#screenshots">Screenshots</a>
+    <a href="assets/presskit.zip">Press kit</a>
+    <a href="mailto:support@lookout-labs.com">support@lookout-labs.com</a>
+  </div>
+  <p class="squeak">© 2026 Lookout Labs. Contents of this manual are subject to
+  balance passes, enemy action, and the wind. Death is a dignified squeak and a
+  puff of smoke.</p>
+</footer>
+
+</body>
+</html>
