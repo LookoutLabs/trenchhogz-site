@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trench Hogz — No Man's Swine</title>
+<meta name="description" content="Hogs of War-style turn-based tactics: lead a squad of very serious pigs over the top. Six classes, killstreaks, a walking-mech raid boss and permadeath Operations — flat-shaded PS1 war where death is a dignified squeak.">
+<!-- Open Graph / social cards -->
+<meta property="og:title" content="Trench Hogz — No Man's Swine">
+<meta property="og:description" content="Squad-versus-squad turn-based artillery war in a flat-shaded PS1 world. Wishlist now.">
+<meta property="og:image" content="assets/hero.webp">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --mud:#181410;
+    --trench:#241d15;
+    --parapet:#33291c;
+    --sky:#cbb98a;
+    --bone:#e8ddc4;
+    --dust:#a3937a;
+    --gold:#f2b32b;
+    --gold-hot:#ffd45e;
+    --signal:#66d9d0;
+    --blood:#b5402e;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--mud);
+    color:var(--bone);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:16px;
+    line-height:1.65;
+  }
+  h1,h2,h3,.btn,nav a{font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.06em}
+  img{display:block;max-width:100%}
+  a{color:var(--gold);text-decoration:none}
+  a:hover{color:var(--gold-hot)}
+
+  /* ── nav ─────────────────────────────── */
+  nav{
+    position:sticky;top:0;z-index:50;
+    display:flex;align-items:center;gap:1.6rem;
+    padding:.65rem 1.4rem;
+    background:rgba(24,20,16,.92);
+    border-bottom:2px solid var(--parapet);
+    backdrop-filter:blur(6px);
+  }
+  nav .wordmark{font-weight:700;font-size:1.05rem;color:var(--gold);letter-spacing:.1em}
+  nav .links{display:flex;gap:1.3rem;margin-left:auto;align-items:center}
+  nav .links a{font-size:.85rem;font-weight:600;color:var(--dust)}
+  nav .links a:hover{color:var(--bone)}
+  .btn{
+    display:inline-block;padding:.55rem 1.3rem;
+    background:var(--gold);color:#1c1712;font-weight:700;font-size:.9rem;
+    border:none;cursor:pointer;
+    box-shadow:3px 3px 0 #0009;
+    transition:transform .08s,box-shadow .08s;
+  }
+  .btn:hover{background:var(--gold-hot);color:#1c1712;transform:translate(-1px,-1px);box-shadow:4px 4px 0 #0009}
+  .btn.ghost{background:transparent;color:var(--bone);outline:2px solid var(--bone)}
+  .btn.ghost:hover{color:var(--gold-hot);outline-color:var(--gold-hot)}
+
+  /* ── hero ────────────────────────────── */
+  header.hero{
+    position:relative;overflow:hidden;
+    min-height:88vh;
+    display:flex;flex-direction:column;justify-content:center;align-items:center;
+    text-align:center;padding:4rem 1.5rem 5rem;
+    background:url('assets/wide_hero.webp') center 30%/cover no-repeat, var(--trench);
+  }
+  header.hero::after{ /* vignette + dither-friendly darkening */
+    content:'';position:absolute;inset:0;
+    background:radial-gradient(ellipse at center 40%, transparent 0%, rgba(20,15,10,.55) 75%, rgba(20,15,10,.85) 100%),
+               linear-gradient(180deg, rgba(20,15,10,.35), transparent 30%, transparent 60%, var(--mud) 100%);
+  }
+  .hero>*{position:relative;z-index:2}
+  .hero img.logo{width:min(560px,84vw);filter:drop-shadow(0 6px 0 rgba(0,0,0,.45))}
+  .hero .tagline{
+    margin-top:1.1rem;color:var(--signal);font-size:.95rem;letter-spacing:.35em;
+    text-transform:uppercase;font-weight:500;
+    text-shadow:0 2px 0 #000a;
+  }
+  .hero p.pitch{max-width:34rem;margin:1.4rem auto 0;color:var(--bone);font-size:.95rem;text-shadow:0 1px 0 #000c, 0 0 18px #000a}
+  .hero .cta{margin-top:2rem;display:flex;gap:1rem;flex-wrap:wrap;justify-content:center}
+  .hero .platforms{margin-top:1.2rem;font-size:.75rem;color:var(--dust);letter-spacing:.12em;text-shadow:0 1px 0 #000}
+
+  /* ── shared section chrome ───────────── */
+  section{padding:4.5rem 1.5rem}
+  .shell{max-width:1080px;margin:0 auto}
+  .kicker{color:var(--gold);font-size:.78rem;letter-spacing:.3em;text-transform:uppercase;font-family:'IBM Plex Mono',monospace}
+  h2{font-size:clamp(1.7rem,4vw,2.4rem);font-weight:700;margin:.4rem 0 .6rem}
+  .rule{width:72px;height:4px;background:var(--gold);margin-bottom:1.6rem}
+  .lede{color:var(--dust);max-width:46rem}
+
+  /* ── features ────────────────────────── */
+  #game{background:var(--mud)}
+  .features{
+    margin-top:2.4rem;
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.1rem;
+  }
+  .feature{
+    background:var(--trench);border:1px solid var(--parapet);
+    padding:1.25rem 1.25rem 1.35rem;
+    position:relative;
+  }
+  .feature::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--gold);opacity:.85}
+  .feature h3{font-size:1.02rem;font-weight:600;color:var(--gold-hot);margin-bottom:.45rem}
+  .feature p{font-size:.85rem;color:var(--bone)}
+  .feature p em{color:var(--dust);font-style:italic}
+
+  /* ── screenshots ─────────────────────── */
+  #screenshots{background:linear-gradient(180deg,var(--mud),#100d0a)}
+  .gallery{margin-top:2.4rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.2rem}
+  figure.shot{background:var(--trench);border:1px solid var(--parapet);cursor:zoom-in}
+  figure.shot img{width:100%;aspect-ratio:16/9;object-fit:cover}
+  figure.shot figcaption{padding:.7rem .9rem .8rem;font-size:.78rem;color:var(--dust);line-height:1.5}
+  dialog.lightbox{border:none;background:transparent;max-width:min(1200px,94vw);padding:0}
+  dialog.lightbox::backdrop{background:rgba(10,8,6,.92)}
+  dialog.lightbox img{width:100%;border:2px solid var(--parapet)}
+  dialog.lightbox figcaption{color:var(--bone);font-family:'IBM Plex Mono',monospace;font-size:.85rem;padding:.8rem .2rem;text-align:center}
+
+  /* ── operations strip ────────────────── */
+  #operations{
+    background:url('assets/page_bg.webp') center/cover no-repeat fixed, var(--trench);
+    position:relative;
+  }
+  #operations::before{content:'';position:absolute;inset:0;background:rgba(18,14,10,.87)}
+  #operations .shell{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:2.6rem;align-items:center}
+  #operations img{border:2px solid var(--parapet);box-shadow:6px 6px 0 #0007}
+  #operations p{font-size:.92rem;margin-top:1rem}
+  #operations p+p{margin-top:.8rem;color:var(--dust)}
+
+  /* ── devlog ──────────────────────────── */
+  #devlog{background:var(--mud)}
+  .posts{margin-top:2.4rem;display:flex;flex-direction:column;gap:1.1rem;max-width:46rem}
+  article.post{background:var(--trench);border:1px solid var(--parapet);padding:1.4rem 1.5rem}
+  article.post time{font-size:.72rem;color:var(--signal);letter-spacing:.18em;text-transform:uppercase}
+  article.post h3{font-size:1.15rem;color:var(--bone);margin:.35rem 0 .5rem;font-weight:600}
+  article.post p{font-size:.87rem;color:var(--dust)}
+  article.post a.more{font-size:.8rem;font-family:'IBM Plex Mono',monospace}
+
+  /* ── enlist / community ──────────────── */
+  #enlist{background:linear-gradient(180deg,var(--mud),#0d0a08);text-align:center}
+  #enlist .shell{max-width:44rem}
+  #enlist form{margin-top:1.8rem;display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap}
+  #enlist input[type=email]{
+    flex:1 1 260px;max-width:340px;
+    padding:.6rem .9rem;font-family:'IBM Plex Mono',monospace;font-size:.9rem;
+    background:#0e0b09;color:var(--bone);border:2px solid var(--parapet);
+  }
+  #enlist input[type=email]:focus{outline:none;border-color:var(--gold)}
+  #enlist .socials{margin-top:1.6rem;display:flex;gap:1.4rem;justify-content:center;font-size:.85rem}
+  #enlist .fineprint{margin-top:1.2rem;font-size:.72rem;color:#6b5f4d}
+
+  /* ── footer ──────────────────────────── */
+  footer{
+    border-top:2px solid var(--parapet);
+    padding:2.4rem 1.5rem 3rem;
+    display:flex;flex-wrap:wrap;gap:2rem;justify-content:space-between;
+    max-width:1080px;margin:0 auto;
+    font-size:.78rem;color:var(--dust);
+  }
+  footer .col h4{font-family:'Oswald',sans-serif;text-transform:uppercase;font-size:.8rem;color:var(--bone);margin-bottom:.5rem;letter-spacing:.12em}
+  footer .col a{display:block;margin:.2rem 0}
+  footer .squeak{width:100%;margin-top:1rem;color:#6b5f4d;font-size:.72rem}
+
+  @media(max-width:760px){
+    #operations .shell{grid-template-columns:1fr}
+    nav .links a:not(.btn){display:none}
+    #operations{background-attachment:scroll}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="wordmark">Trench Hogz</span>
+  <div class="links">
+    <a href="#game">The Game</a>
+    <a href="#screenshots">Screenshots</a>
+    <a href="#operations">Operations</a>
+    <a href="#devlog">Devlog</a>
+    <a href="#press">Press</a>
+    <!-- TODO: replace # with the real Steam store URL once the App ID exists -->
+    <a class="btn" href="#enlist">Wishlist</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <img class="logo" src="assets/logo.webp" alt="Trench Hogz" width="900" height="515">
+  <div class="tagline">No Man's Swine</div>
+  <p class="pitch">Hogs of War–style turn-based tactics: lead a squad of very serious
+  pigs over the top. Flat-shaded PS1 war where friendly fire is always on and
+  death is a dignified squeak.</p>
+  <div class="cta">
+    <!-- TODO: real Steam URL -->
+    <a class="btn" href="#enlist">Wishlist on Steam</a>
+    <a class="btn ghost" href="#screenshots">See the Front</a>
+  </div>
+  <div class="platforms">Windows · macOS — Alpha in active development</div>
+</header>
+
+<section id="game">
+  <div class="shell">
+    <span class="kicker">Situation Report</span>
+    <h2>The war is small, round and pink</h2>
+    <div class="rule"></div>
+    <p class="lede">Squad-versus-squad turn-based artillery war in a flat-shaded PS1
+    world: aim it yourself, arc it over the parapet, and accept that the wind, the
+    trench and your own mortar are all technically neutral parties.</p>
+
+    <div class="features">
+      <div class="feature">
+        <h3>Six classes, one very bad idea each</h3>
+        <p>Grunt, Assault, Grenadier, Heavy, Medic, Sniper — plus the cloak-and-blade
+        Phantom, the Dogs, and the Tribals with the only true arcs in the game.</p>
+      </div>
+      <div class="feature">
+        <h3>A ten-weapon table and the dirty tricks</h3>
+        <p>Rifles that fly flat inside the sights, bear traps that hold a grudge, C4,
+        molotovs, and a bazooka answer to most architectural questions.</p>
+      </div>
+      <div class="feature">
+        <h3>Killstreaks up to the end of the match</h3>
+        <p>UAV, mortar racks, a steered missile flown from a field tablet, and a nuke
+        with a five-beat cinematic and a bunker door that does not reopen.</p>
+      </div>
+      <div class="feature">
+        <h3>Operations: the campaign as a ladder</h3>
+        <p>Nine-rung towers with one roster and real permadeath — your pigs carry
+        service records, and the memorial board remembers everyone who didn't.</p>
+      </div>
+      <div class="feature">
+        <h3>The Steel Sow</h3>
+        <p>A raid on a walking factory. Three systems, one pilot, one very large
+        problem. Bring the squad; leave with an anecdote.</p>
+      </div>
+      <div class="feature">
+        <h3>Countdown</h3>
+        <p>One side arms the warhead, one side stops it — or gets behind the door.
+        Five endings, all of them somebody's fault.</p>
+      </div>
+      <div class="feature">
+        <h3>A home between tours</h3>
+        <p>A walkable hangar hub, an outfitters, squad presets, daily contracts,
+        ranks, medals, and a Play of the Match.</p>
+      </div>
+      <div class="feature">
+        <h3>The look is a decision</h3>
+        <p>One directional light, no PBR, dithered skies, optional CRT-Full glass.
+        <em>1998 called; the war answered.</em></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="screenshots">
+  <div class="shell">
+    <span class="kicker">Field Photography</span>
+    <h2>Dispatches from the front</h2>
+    <div class="rule"></div>
+
+    <div class="gallery">
+      <figure class="shot"><img src="assets/shot_01.webp" loading="lazy" alt="Squad firefight at dusk">
+        <figcaption>The Bacon Brigade goes over the top. The mud was spoken for; they went anyway.</figcaption></figure>
+      <figure class="shot"><img src="assets/shot_02.webp" loading="lazy" alt="Guided missile field tablet view">
+        <figcaption>The field tablet. One designation, one very attentive missile.</figcaption></figure>
+      <figure class="shot"><img src="assets/shot_03.webp" loading="lazy" alt="Something below The Gulch feeding">
+        <figcaption>Out of bounds on The Gulch is not a rules violation. It is a feeding.</figcaption></figure>
+      <figure class="shot"><img src="assets/shot_04.webp" loading="lazy" alt="The Steel Sow walking mech">
+        <figcaption>The Steel Sow, from the gantries. Three systems, one pilot, one very large problem.</figcaption></figure>
+      <figure class="shot"><img src="assets/shot_05.webp" loading="lazy" alt="Night battle with lamps and tracers">
+        <figcaption>Night work: lamps on, tracers doubled, everyone pretending to be brave.</figcaption></figure>
+      <figure class="shot"><img src="assets/shot_06.webp" loading="lazy" alt="The hangar hub between missions">
+        <figcaption>The hangar between tours. The crew is home; the horizon is not quiet.</figcaption></figure>
+      <figure class="shot"><img src="assets/shot_07.webp" loading="lazy" alt="Operation ladder campaign screen">
+        <figcaption>An Operation is a ladder, climbed one rung at a time. Losses are permanent; the top rung does not introduce itself.</figcaption></figure>
+      <figure class="shot"><img src="assets/shot_08.webp" loading="lazy" alt="CRT display filter">
+        <figcaption>The CRT-Full pass. 1998 called; the war answered.</figcaption></figure>
+    </div>
+  </div>
+  <dialog class="lightbox" id="lightbox" aria-label="Screenshot viewer">
+    <figure><img alt=""><figcaption></figcaption></figure>
+  </dialog>
+</section>
+
+<section id="operations">
+  <div class="shell">
+    <div>
+      <span class="kicker">Permadeath, With Paperwork</span>
+      <h2>The memorial board remembers</h2>
+      <div class="rule"></div>
+      <p>Operations are nine-rung ladders fought with one roster. Every pig carries
+      a name, a class and a service record — and when one doesn't come back, the
+      board in the hangar carries the rest.</p>
+      <p>"Bosun Broadside — Heavy, Blue Boars." You will rename him something
+      shorter. You will regret how attached you got. The War Office thanks you for
+      your continued enlistment.</p>
+    </div>
+    <img src="assets/memorial.webp" alt="The memorial board in the hangar">
+  </div>
+</section>
+
+<section id="devlog">
+  <div class="shell">
+    <span class="kicker">From the Workshop</span>
+    <h2>Devlog</h2>
+    <div class="rule"></div>
+    <p class="lede">Field reports from development. New entries land here first.</p>
+
+    <div class="posts">
+      <!-- Newest first. Copy one of these <article> blocks to add a post. -->
+      <article class="post">
+        <time datetime="2026-08-04">04 · 08 · 2026</time>
+        <h3>The alpha trailer shot kit is in the can</h3>
+        <p>Every beat of the ~70-second cut staged and captured — ProRes at 60fps,
+        with a CRT-glass variant of every take, three maps of hands-off Director
+        b-roll, and a contact sheet so nobody has to scrub. Every shot is
+        re-stageable from a committed shot book, forever. The edit is next.</p>
+      </article>
+      <article class="post">
+        <time datetime="2026-08-02">02 · 08 · 2026</time>
+        <h3>The Steam sheet is baked, not painted</h3>
+        <p>Capsules, screenshots, achievement icons — all of it renders from the
+        game itself via a staged hero moment frozen in data. Re-art the game,
+        re-run the bake, and the store page is honest again. 31 achievements
+        wired hooks-ready, from First Blood to The Warhead Was for Show.</p>
+      </article>
+      <article class="post">
+        <time datetime="2026-07-30">30 · 07 · 2026</time>
+        <h3>Rules of engagement: modes &amp; mutators</h3>
+        <p>King of the Hill, Sudden Death with a closing ring, Big Squads, One
+        Life, and a Fog of War the AI honours exactly as you do. Mutators stack,
+        the compatibility matrix keeps them honest, and QUICK PLAY remembers
+        your favourite way to lose pigs.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="enlist">
+  <div class="shell">
+    <span class="kicker">Enlistment Office</span>
+    <h2>Join the muster roll</h2>
+    <div class="rule" style="margin-inline:auto"></div>
+    <p class="lede" style="margin-inline:auto">Wishlist the game, or leave an address and get a
+    dispatch when the trailer drops and the alpha opens. No spam — the War
+    Office can barely manage one war.</p>
+
+    <!-- TODO: point action at your mailing-list provider (Buttondown / Mailchimp / etc.) -->
+    <form action="#" method="post" onsubmit="alert('Hook this form to your mailing-list provider.');return false">
+      <input type="email" name="email" placeholder="pvt.bertie@example.com" required aria-label="Email address">
+      <button class="btn" type="submit">Enlist</button>
+    </form>
+
+    <div class="socials">
+      <!-- TODO: real links -->
+      <a href="#">Steam</a>
+      <a href="#">Discord</a>
+      <a href="#">YouTube</a>
+      <a href="#">Bluesky</a>
+    </div>
+    <p class="fineprint">Wishlist link goes live with the Steam page.</p>
+  </div>
+</section>
+
+<footer id="press">
+  <div class="col">
+    <h4>Trench Hogz</h4>
+    <p>A retro-PS1 turn-based artillery game.<br>Built in Godot 4. Windows &amp; macOS.<br>Single-player · hotseat multiplayer.</p>
+  </div>
+  <div class="col">
+    <h4>Press</h4>
+    <!-- TODO: link a hosted press kit (zip of steam_assets/ + fact sheet works fine) -->
+    <a href="#">Press kit</a>
+    <a href="mailto:walk@walkitytalk.com">Contact</a>
+  </div>
+  <div class="col">
+    <h4>Minimum spec</h4>
+    <p>Any 4-core CPU from the last ~8 years<br>8 GB RAM · integrated GPU · 1 GB disk<br>1080p/60 at default settings</p>
+  </div>
+  <p class="squeak">© 2026 Walkity Talk. All pigs memorialised with full honours. Death is a dignified squeak and a puff of smoke.</p>
+</footer>
+
+<script>
+  // Screenshot lightbox
+  const lb = document.getElementById('lightbox');
+  const lbImg = lb.querySelector('img');
+  const lbCap = lb.querySelector('figcaption');
+  document.querySelectorAll('figure.shot').forEach(fig => {
+    fig.addEventListener('click', () => {
+      lbImg.src = fig.querySelector('img').src;
+      lbImg.alt = fig.querySelector('img').alt;
+      lbCap.textContent = fig.querySelector('figcaption').textContent;
+      lb.showModal();
+    });
+  });
+  lb.addEventListener('click', () => lb.close());
+</script>
+</body>
+</html>
